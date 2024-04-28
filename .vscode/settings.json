@@ -139,4 +139,5 @@
         "--pch-storage=memory",
     ],
     "editor.tabSize": 2,
+    "C_Cpp.clang_format_fallbackStyle": "LLVM",
 }
