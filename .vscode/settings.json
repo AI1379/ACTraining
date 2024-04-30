@@ -124,9 +124,6 @@
         80
     ],
     "C_Cpp.clang_format_sortIncludes": true, // 格式化时调整include的顺序（按字母排序）
-    "[cpp]": {
-        "editor.defaultFormatter": "ms-vscode.cpptools"
-    },
     "clangd.arguments": [
         "--background-index",
         "-j=12",
