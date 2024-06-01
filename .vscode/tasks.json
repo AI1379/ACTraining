@@ -3,7 +3,7 @@
         {
             "type": "shell",
             "label": "build",
-            "command": "clang++",
+            "command": "g++",
             "args": [
                 "-g",
                 "${file}",
