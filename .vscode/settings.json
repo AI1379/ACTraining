@@ -137,4 +137,6 @@
     ],
     "editor.tabSize": 2,
     "C_Cpp.clang_format_fallbackStyle": "LLVM",
+    "C_Cpp.default.compilerPath": "C:/msys64/usr/bin/g++.exe",
+    "C_Cpp.intelliSenseEngine": "default",
 }

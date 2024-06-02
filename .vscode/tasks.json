@@ -19,6 +19,30 @@
                 "cwd": "${fileDirname}"
             }
         },
+        {
+            "type": "shell",
+            "label": "msysbuild",
+            "command": "C:/msys64/usr/bin/gcc.exe",
+            "args": [
+                "-g",
+                "${file}",
+                "-O2",
+                "-std=c++17",
+                "-Wall",
+                "-Wextra",
+                "-DDEBUG",
+                "-o",
+                "${workspaceFolder}/build/${fileBasenameNoExtension}.exe",
+                "-LC:/msys64/usr/lib",
+                "-static-libstdc++",
+                "-static-libgcc",
+                "-lstdc++",
+                "-lm"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            }
+        },
     ],
     "version": "2.0.0"
 }
