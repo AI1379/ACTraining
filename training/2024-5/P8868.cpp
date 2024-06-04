@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
+#define ull unsigned long long
 const ll MAXN = 250010;
 const ll MAXM = 250010;
 #define lson (cur * 2)
@@ -8,12 +9,12 @@ const ll MAXM = 250010;
 #define sgmid (segt[cur].mid)
 namespace SegmentTree {
 struct Info {
-  ll s, sx, sy, sxy;
-  ll len;
+  ull s, sx, sy, sxy;
+  ull len;
 };
 struct Tag {
-  ll cx, cy;
-  ll mx, my, mxy, mlen;
+  ull cx, cy;
+  ull mx, my, mxy, mlen;
 };
 bool emptytag(const Tag &t) {
   return !(t.cx || t.cy || t.mx || t.my || t.mxy || t.mlen);
@@ -24,14 +25,32 @@ struct Node {
   Tag tag;
 };
 Node *segt;
-ll *a, *b;
+ull *a, *b;
 Info merge(const Info &lhs, const Info &rhs) {
   return {lhs.s + rhs.s, lhs.sx + rhs.sx, lhs.sy + rhs.sy, lhs.sxy + rhs.sxy,
           lhs.len + rhs.len};
 }
 Tag merge(const Tag &lhs, const Tag &rhs) {
   Tag res{lhs};
-
+  if (lhs.cx && lhs.cy) {
+    res.mlen += rhs.mxy * lhs.cx * lhs.cy + rhs.mx * lhs.cx + rhs.my * lhs.cy +
+                rhs.mlen;
+  } else if (lhs.cx) {
+    res.my += rhs.mxy * lhs.cx + rhs.my;
+    res.mlen += rhs.mlen + lhs.cx * rhs.mx;
+  } else if (lhs.cy) {
+    res.mx += rhs.mxy * lhs.cy + rhs.mx;
+    res.mlen += rhs.mlen + lhs.cy * rhs.my;
+  } else {
+    res.mlen += rhs.mlen;
+    res.mx += rhs.mx;
+    res.my += rhs.my;
+    res.mxy += rhs.mxy;
+  }
+  if (rhs.cx)
+    res.cx = rhs.cx;
+  if (rhs.cy)
+    res.cy = rhs.cy;
   return res;
 }
 Info merge(const Info &val, const Tag &tag) {
@@ -79,6 +98,8 @@ void build(ll cur, ll l, ll r) {
   pushup(cur);
 }
 void update(ll cur, ll l, ll r, Tag t) {
+  cout << cur << ' ' << l << ' ' << r << ' ' << segt[cur].l << ' '
+       << segt[cur].r << endl;
   if (l <= segt[cur].l && segt[cur].r <= r) {
     segt[cur].info = merge(segt[cur].info, t);
     segt[cur].tag = merge(segt[cur].tag, t);
@@ -108,8 +129,11 @@ struct Query {
 };
 ll n, q;
 SegmentTree::Node segt[MAXN * 4];
-ll a[MAXN], b[MAXN];
+ull a[MAXN], b[MAXN];
 Query qs[MAXM];
+ull lefta[MAXN], leftb[MAXN];
+pair<ull, ll> stk1[MAXN], stk2[MAXN];
+ll top1 = 0, top2 = 0;
 int main() {
   cin >> q >> n;
   for (int i = 1; i <= n; ++i) {
@@ -121,6 +145,7 @@ int main() {
   SegmentTree::segt = segt;
   SegmentTree::a = a;
   SegmentTree::b = b;
+  SegmentTree::build(1, 1, n);
   cin >> q;
   for (int i = 1; i <= q; ++i) {
     cin >> qs[i].l >> qs[i].r;
@@ -128,11 +153,39 @@ int main() {
   }
   sort(qs + 1, qs + q + 1,
        [](const Query &lhs, const Query &rhs) { return lhs.r < rhs.r; });
-
+  cout << "sorted" << endl;
+  a[0] = b[0] = (1ll << 63);
+  for (int j = n; j >= 0; --j) {
+    while (top1 && stk1[top1].first < a[j]) {
+      lefta[stk1[top1].second] = j + 1;
+      --top1;
+    }
+    stk1[++top1] = make_pair(a[j], j);
+    while (top2 && stk2[top2].first < b[j]) {
+      leftb[stk2[top2].second] = j + 1;
+      --top2;
+    }
+    stk2[++top2] = make_pair(b[j], j);
+  }
+  for (auto i = 1; i <= n; ++i) {
+    cout << a[i] << ' ' << lefta[i] << ' ' << b[i] << ' ' << leftb[i] << endl;
+  }
+  cout << "queued" << endl;
+  for (int i = 1, j = 1; i <= n && j <= q; ++i) {
+    SegmentTree::update(1, lefta[i], i, SegmentTree::Tag{a[i], 0, 0, 0, 0, 0});
+    SegmentTree::update(1, leftb[i], i, SegmentTree::Tag{0, b[i], 0, 0, 0, 0});
+    SegmentTree::update(1, 1, i, SegmentTree::Tag{0, 0, 0, 0, 1, 0});
+    cout << "updated" << endl;
+    while (qs[j].r == i && j <= q) {
+      qs[j].ans = SegmentTree::query(1, qs[j].l, i).sxy;
+      ++j;
+    }
+    cout << "queried" << endl;
+  }
   sort(qs + 1, qs + q + 1,
        [](const Query &lhs, const Query &rhs) { return lhs.pos < rhs.pos; });
   for (int i = 1; i <= q; ++i) {
-    cout << qs[i].pos << endl;
+    cout << qs[i].ans << endl;
   }
   return 0;
 }
