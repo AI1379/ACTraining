@@ -29,8 +29,28 @@ Info merge(const Info &lhs, const Info &rhs) {
   return {lhs.s + rhs.s, lhs.sx + rhs.sx, lhs.sy + rhs.sy, lhs.sxy + rhs.sxy,
           lhs.len + rhs.len};
 }
-Tag merge(const Tag &lhs, const Tag &rhs) {}
-Info merge(const Info &val, const Tag &tag) {}
+Tag merge(const Tag &lhs, const Tag &rhs) {
+  Tag res{lhs};
+
+  return res;
+}
+Info merge(const Info &val, const Tag &tag) {
+  Info res = val;
+  res.s += tag.mx * val.sx + tag.my * val.sy + tag.mxy * val.sxy +
+           tag.mlen * val.len;
+  if (tag.cx && tag.cy) {
+    res.sxy += val.len * tag.cx * tag.cy;
+    res.sx += val.len * tag.cx;
+    res.sy += val.len * tag.cy;
+  } else if (tag.cx) {
+    res.sxy = tag.cx * val.len;
+    res.sx += tag.cx * val.len;
+  } else if (tag.cy) {
+    res.sxy = tag.cy * val.len;
+    res.sy += tag.cy * val.len;
+  }
+  return res;
+}
 void pushup(ll cur) {
   segt[cur].info = merge(segt[lson].info, segt[rson].info);
 }
