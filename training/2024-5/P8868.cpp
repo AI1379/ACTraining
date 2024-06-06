@@ -121,7 +121,7 @@ Info query(ll cur, ll l, ll r) {
 }
 } // namespace SegmentTree
 struct Query {
-  ll l, r, pos, ans;
+  ull l, r, pos, ans;
 };
 ll n, q;
 Query qs[MAXM];
