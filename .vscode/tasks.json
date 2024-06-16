@@ -1,48 +1,47 @@
 {
-    "tasks": [
-        {
-            "type": "shell",
-            "label": "build",
-            "command": "g++",
-            "args": [
-                "-g",
-                "${file}",
-                "-O2",
-                "-std=c++17",
-                "-Wall",
-                "-Wextra",
-                "-DDEBUG",
-                "-o",
-                "${workspaceFolder}/build/${fileBasenameNoExtension}.exe",
-            ],
-            "options": {
-                "cwd": "${fileDirname}"
-            }
-        },
-        {
-            "type": "shell",
-            "label": "msysbuild",
-            "command": "C:/msys64/usr/bin/gcc.exe",
-            "args": [
-                "-g",
-                "${file}",
-                "-O2",
-                "-std=c++17",
-                "-Wall",
-                "-Wextra",
-                "-DDEBUG",
-                "-o",
-                "${workspaceFolder}/build/${fileBasenameNoExtension}.exe",
-                "-LC:/msys64/usr/lib",
-                "-static-libstdc++",
-                "-static-libgcc",
-                "-lstdc++",
-                "-lm"
-            ],
-            "options": {
-                "cwd": "${fileDirname}"
-            }
-        },
-    ],
-    "version": "2.0.0"
+  "tasks": [
+    {
+      "type": "shell",
+      "label": "build",
+      "command": "g++",
+      "args": [
+        "-g",
+        "${file}",
+        "-O2",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-DDEBUG",
+        "-o",
+        "${workspaceFolder}/build/${fileBasenameNoExtension}.exe"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      }
+    },
+    {
+      "type": "shell",
+      "label": "msysbuild",
+      "command": "gcc.exe",
+      "args": [
+        "-g",
+        "${file}",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-DDEBUG",
+        "-o",
+        "${workspaceFolder}/build/${fileBasenameNoExtension}.exe",
+        "-lstdc++",
+        "-lm"
+      ],
+      "options": {
+        "cwd": "${fileDirname}",
+        "env": {
+          "PATH": "${env:PATH};C:\\Users\\liste\\scoop\\apps\\msys2\\current\\usr\\bin",
+        }
+      }
+    }
+  ],
+  "version": "2.0.0"
 }
