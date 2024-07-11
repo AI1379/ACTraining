@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define ll long long
-#define ull unsigned long long
+#define ll int
+#define ull uint64_t
 const ll MAXN = 250010;
 const ll MAXM = 250010;
 #define lson (cur * 2)
@@ -20,7 +20,7 @@ bool emptytag(const Tag &t) {
   return !(t.cx || t.cy || t.mx || t.my || t.mxy || t.mlen);
 }
 struct Node {
-  ll l, r, mid;
+  ull l, r, mid;
   Info info;
   Tag tag;
 };
@@ -82,7 +82,7 @@ void pushdown(ll cur) {
     segt[cur].tag = Tag{};
   }
 }
-void build(ll cur, ll l, ll r) {
+void build(ll cur, ull l, ull r) {
   segt[cur].l = l;
   segt[cur].r = r;
   segt[cur].mid = (l + r) / 2;
@@ -121,13 +121,14 @@ Info query(ll cur, ll l, ll r) {
 }
 } // namespace SegmentTree
 struct Query {
-  ull l, r, pos, ans;
+  int l, r, pos;
+  ull ans;
 };
 ll n, q;
 Query qs[MAXM];
-ull lefta[MAXN], leftb[MAXN];
+// int lefta[MAXN], leftb[MAXN];
 int stk1[MAXN], stk2[MAXN];
-ll top1 = 0, top2 = 0;
+int top1 = 0, top2 = 0;
 int main() {
   using namespace SegmentTree;
   cin >> q >> n;
@@ -145,25 +146,18 @@ int main() {
   }
   sort(qs + 1, qs + q + 1,
        [](const Query &lhs, const Query &rhs) { return lhs.r < rhs.r; });
-  for (int j = 1; j <= n; ++j) {
+  for (int j = 1, idx = 1; j <= n; ++j) {
     while (top1 && a[stk1[top1]] < a[j])
       --top1;
-    lefta[j] = stk1[top1] + 1;
+    update(1, stk1[top1] + 1, j, Tag{a[j], 0, 0, 0, 0, 0});
     while (top2 && b[stk2[top2]] < b[j])
       --top2;
-    leftb[j] = stk2[top2] + 1;
+    update(1, stk2[top2] + 1, j, Tag{0, b[j], 0, 0, 0, 0});
     stk1[++top1] = stk2[++top2] = j;
-  }
-  for (auto i = 1; i <= n; ++i) {
-    cout << a[i] << ' ' << lefta[i] << ' ' << b[i] << ' ' << leftb[i] << endl;
-  }
-  for (int i = 1, j = 1; i <= n && j <= q; ++i) {
-    update(1, lefta[i], i, Tag{a[i], 0, 0, 0, 0, 0});
-    update(1, leftb[i], i, Tag{0, b[i], 0, 0, 0, 0});
-    update(1, 1, i, Tag{0, 0, 0, 0, 1, 0});
-    while (qs[j].r == i && j <= q) {
-      qs[j].ans = query(1, qs[j].l, i).s;
-      ++j;
+    update(1, 1, j, Tag{0, 0, 0, 0, 1, 0});
+    while (qs[idx].r == j && idx <= q) {
+      qs[idx].ans = query(1, qs[idx].l, j).s;
+      ++idx;
     }
   }
   sort(qs + 1, qs + q + 1,
