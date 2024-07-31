@@ -34,7 +34,6 @@ ll query(ll cur, ll cl, ll cr, ll x) {
     return min(calc(segt[cur], x), query(lson, cl, mid, x));
   else
     return min(calc(segt[cur], x), query(rson, mid + 1, cr, x));
-  return 0;
 }
 int main() {
   cin >> n >> s;
