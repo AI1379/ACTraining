@@ -13,6 +13,11 @@ vector<ll> vbcclist[MAXN];
 void tarjan(ll u, ll fa) {
   low[u] = dfn[u] = ++idx;
   stk[++top] = u;
+  if (graph[u].empty()) {
+    ++cnt;
+    vbcclist[cnt].emplace_back(u);
+    return;
+  }
   for (auto v : graph[u]) {
     if (!dfn[v]) {
       tarjan(v, u);
@@ -21,12 +26,14 @@ void tarjan(ll u, ll fa) {
       low[u] = min(low[u], dfn[v]);
     }
   }
-  if (low[u] == dfn[u]) {
+  if (low[u] >= dfn[fa] && fa) {
     ++cnt;
     while (stk[top + 1] != u) {
       vbcclist[cnt].emplace_back(stk[top]);
       --top;
     }
+    if (fa)
+      vbcclist[cnt].emplace_back(fa);
   }
 }
 
@@ -36,6 +43,8 @@ int main() {
   cin >> n >> m;
   for (int i = 1; i <= m; ++i) {
     cin >> u >> v;
+    if (u == v)
+      continue;
     graph[u].emplace_back(v);
     graph[v].emplace_back(u);
   }

@@ -1,7 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
-#define w(x) (1 <= (x) && (x) <= n ? 1 : 0)
+#define w(x) (1 <= (x) && (x) <= n ? -1 : rstree[x].size())
+#define sz(x) (x <= n ? 1 : 0)
 constexpr ll MAXN = 100010;
 ll n, m;
 vector<ll> graph[MAXN];
@@ -13,13 +14,20 @@ ll dfn[MAXN], low[MAXN], idx = 0;
 ll stk[MAXN], top = 0;
 ll vbcccnt = 0;
 
-ll subsize[MAXN * 2];
+ll s[MAXN];
+ll rsize[MAXN * 2];
 ll dp[MAXN * 2];
 ll ans = 0;
 
 void tarjan(ll u, ll fa) {
   dfn[u] = low[u] = ++idx;
   stk[++top] = u;
+  if (graph[u].empty()) {
+    vbcccnt++;
+    rstree[vbcccnt + n].push_back(u);
+    rstree[u].push_back(vbcccnt + n);
+    return;
+  }
   for (auto v : graph[u]) {
     if (!dfn[v]) {
       tarjan(v, u);
@@ -28,27 +36,32 @@ void tarjan(ll u, ll fa) {
       low[u] = min(low[u], dfn[v]);
     }
   }
-  if (low[u] == dfn[u]) {
+  if (low[u] >= dfn[fa] && fa) {
     vbcccnt++;
     while (stk[top + 1] != u) {
       rstree[vbcccnt + n].push_back(stk[top]);
       rstree[stk[top]].push_back(vbcccnt + n);
       top--;
     }
-    rstree[fa].push_back(vbcccnt + n);
-    if (fa != 0)
+    if (fa) {
+      rstree[fa].push_back(vbcccnt + n);
       rstree[vbcccnt + n].push_back(fa);
+    }
   }
 }
 
 void treedp(int rt) {
+  // cout << s[rt] << endl;
   auto dfs = [&](auto &&self, ll u, ll fa) -> void {
+    rsize[u] = sz(u);
     for (auto v : rstree[u]) {
       if (v == fa)
         continue;
       self(self, v, u);
-      ans += (subsize[u] - w(u)) * (subsize[rt] - subsize[u]);
+      ans += 2 * rsize[u] * w(u) * rsize[v];
+      rsize[u] += rsize[v];
     }
+    ans += 2 * rsize[u] * w(u) * (s[rt] - rsize[u]);
   };
   dfs(dfs, rt, 0);
 }
@@ -64,20 +77,20 @@ int main() {
   }
   for (int i = 1; i <= n; i++) {
     if (!dfn[i]) {
+      rstree[0].push_back(i);
       tarjan(i, 0);
+      s[i] = idx;
+      idx = 0;
     }
   }
 
-  auto calcsubsize = [&](auto &&self, ll u, ll fa) -> void {
-    subsize[u] = w(u);
-    for (auto v : rstree[u]) {
-      if (v == fa)
-        continue;
-      self(self, v, u);
-      subsize[u] += subsize[v];
-    }
-  };
-  calcsubsize(calcsubsize, 0, 0);
+  // for (int i = 0; i <= n + vbcccnt; i++) {
+  //   cout << i << ": ";
+  //   for (auto u : rstree[i]) {
+  //     cout << u << ' ';
+  //   }
+  //   cout << endl;
+  // }
 
   for (auto u : rstree[0]) {
     treedp(u);
