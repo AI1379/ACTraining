@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
-#include <iostream>
 using namespace std;
 #define ll long long
+#define pll pair<ll, ll>
 constexpr ll MAXN = 100010;
 ll T;
 ll n, m;
@@ -23,69 +23,9 @@ int q;
 vector<ll> tree[MAXN * 2];
 ll dfn[MAXN * 2], idx = 0, node[MAXN * 2];
 ll top[MAXN * 2], son[MAXN * 2], fa[MAXN * 2], dep[MAXN * 2], size[MAXN * 2];
-ll pts[MAXN], s = 0;
+ll pts[MAXN * 2], s = 0;
+ll pre[MAXN * 2];
 ll ans = 0;
-
-// use a segment tree to maintain the sum of the subtree
-namespace SegTree {
-
-ll sum[MAXN * 2 * 4], tag[MAXN * 2 * 4];
-void pushup(int rt) { sum[rt] = sum[rt << 1] + sum[rt << 1 | 1]; }
-void pushdown(int rt, int l, int r) {
-  if (tag[rt] != -1) {
-    int mid = (l + r) >> 1;
-    sum[rt << 1] = tag[rt] * (mid - l + 1);
-    sum[rt << 1 | 1] = tag[rt] * (r - mid);
-    tag[rt << 1] = tag[rt];
-    tag[rt << 1 | 1] = tag[rt];
-    tag[rt] = 0;
-  }
-}
-
-void build(int rt, int l, int r) {
-  tag[rt] = -1;
-  if (l == r) {
-    sum[rt] = (node[l] <= n ? 1 : 0);
-    // cout << rt << ' ' << l << ' ' << node[l] << ' ' << sum[rt] << endl;
-    return;
-  }
-  int mid = (l + r) >> 1;
-  build(rt << 1, l, mid);
-  build(rt << 1 | 1, mid + 1, r);
-  pushup(rt);
-}
-
-void modify(int rt, int l, int r, int L, int R, int v) {
-  // cout << "M" << endl;
-  if (L <= l && r <= R) {
-    sum[rt] = v * (r - l + 1);
-    tag[rt] = v;
-    return;
-  }
-  pushdown(rt, l, r);
-  int mid = (l + r) >> 1;
-  if (L <= mid)
-    modify(rt << 1, l, mid, L, R, v);
-  if (R > mid)
-    modify(rt << 1 | 1, mid + 1, r, L, R, v);
-  pushup(rt);
-}
-
-ll query(int rt, int l, int r, int L, int R) {
-  // cout << "Q" << endl;
-  if (L <= l && r <= R)
-    return sum[rt];
-  pushdown(rt, l, r);
-  int mid = (l + r) >> 1;
-  ll ans = 0;
-  if (L <= mid)
-    ans += query(rt << 1, l, mid, L, R);
-  if (R > mid)
-    ans += query(rt << 1 | 1, mid + 1, r, L, R);
-  return ans;
-}
-
-} // namespace SegTree
 
 void getson(ll u, ll f) {
   dep[u] = dep[f] + 1;
@@ -115,37 +55,32 @@ void decompose(ll u, ll f) {
   }
 }
 
-ll update(ll u, ll v) {
-  // jump to the lca of u and v
+pll update(ll u, ll v) {
+  ll res = 0;
   while (top[u] != top[v]) {
-    cout << u << ' ' << v << endl;
     if (dep[top[u]] < dep[top[v]])
       swap(u, v);
-    cout << dfn[top[u]] << ' ' << dfn[u] << endl;
-    ans += SegTree::query(1, 1, n2, dfn[top[u]], dfn[u]);
-    SegTree::modify(1, 1, n2, dfn[top[u]], dfn[u], 0);
+    res += pre[dfn[u]] - pre[dfn[top[u]] - 1];
     u = fa[top[u]];
   }
-  if (dep[u] > dep[v])
+  if (dfn[u] > dfn[v])
     swap(u, v);
-  ans += SegTree::query(1, 1, n2, dfn[u], dfn[v]);
-  // cout << ans << endl;
-  SegTree::modify(1, 1, n2, dfn[u], dfn[v], 0);
-  return u;
+  res += pre[dfn[v]] - pre[dfn[u] - 1];
+  return {res, u};
 }
 
 void solve() {
-  ans = -s;
-  ll cur = pts[1];
-  // build the segment tree
-  // TODO: optimize the segment tree
-  SegTree::build(1, 1, n2);
-  for (int i = 2; i <= s; ++i) {
-    // let cur be the node that is the closest to the root
-    // then we can update the ans by the sum of weight between cur and pts[i]
-    cur = update(cur, pts[i]);
-    // cout << cur << ' ';
+  sort(pts + 1, pts + s + 1, [](int a, int b) { return dfn[a] < dfn[b]; });
+  ans = 0;
+  pts[0] = pts[s];
+  for (int i = 1; i <= s; ++i) {
+    // cout << pts[i] << ' ' << dfn[pts[i]] << endl;
+    auto [res, lca] = update(pts[i - 1], pts[i]);
+    ans += res - (lca <= n ? 1 : 0);
   }
+  ans /= 2;
+  ans += (update(pts[1], pts[s]).second <= n ? 1 : 0);
+  ans -= s;
   cout << ans << endl;
 }
 
@@ -154,11 +89,15 @@ void run() {
   // decompose the tree
   getson(1, 0);
   decompose(1, 1);
+  for (int i = 1; i <= n2; ++i) {
+    pre[i] = pre[i - 1] + (node[i] <= n ? 1 : 0);
+    // cout << i << ' ' << node[i] << ' ' << pre[i] << endl;
+  }
   cin >> q;
   for (int i = 1; i <= q; ++i) {
     cin >> s;
-    for (int i = 1; i <= s; ++i)
-      cin >> pts[i];
+    for (int j = 1; j <= s; ++j)
+      cin >> pts[j];
     solve();
   }
 }
@@ -191,15 +130,14 @@ void Tarjan::tarjan(long long u, long long fa) {
 }
 
 void clear() {
-  for (int i = 1; i <= n + Tarjan::vbcccnt; i++) {
+  for (int i = 1; i <= n; ++i)
     Tarjan::graph[i].clear();
+  for (int i = 1; i <= n + Tarjan::vbcccnt; i++)
     Tree::tree[i].clear();
-  }
   Tarjan::idx = 0;
   Tarjan::top = 0;
   Tarjan::vbcccnt = 0;
   Tree::idx = 0;
-  Tree::s = 0;
   Tree::ans = 0;
   memset(Tarjan::dfn, 0, sizeof(Tarjan::dfn));
   memset(Tarjan::low, 0, sizeof(Tarjan::low));
@@ -212,8 +150,7 @@ void clear() {
   memset(Tree::dep, 0, sizeof(Tree::dep));
   memset(Tree::size, 0, sizeof(Tree::size));
   memset(Tree::pts, 0, sizeof(Tree::pts));
-  memset(Tree::SegTree::sum, 0, sizeof(Tree::SegTree::sum));
-  memset(Tree::SegTree::tag, -1, sizeof(Tree::SegTree::tag));
+  memset(Tree::pre, 0, sizeof(Tree::pre));
 }
 
 void solve() {
@@ -229,6 +166,7 @@ void solve() {
   // then we can build the tree and solve the problem
   Tree::run();
 }
+
 int main() {
   ios::sync_with_stdio(0);
   cin.tie(nullptr);
