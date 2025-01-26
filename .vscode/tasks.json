@@ -7,7 +7,7 @@
       "args": [
         "-g",
         "${file}",
-        "-std=c++17",
+        "-std=c++23",
         "-Wall",
         "-Wextra",
         "-DDEBUG",
@@ -25,7 +25,7 @@
       "args": [
         "-g",
         "${file}",
-        "-std=c++17",
+        "-std=c++23",
         "-Wall",
         "-Wextra",
         "-DDEBUG",
