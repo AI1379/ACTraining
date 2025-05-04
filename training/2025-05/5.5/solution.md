@@ -1,3 +1,14 @@
+---
+documentclass: ctexart
+pdf-engine: xelatex
+geometry: 
+  - top=1.0in
+  - bottom=1.0in
+  - left=0.8in
+  - right=0.8in
+  - heightrounded
+---
+
 # 5.5 Solution
 
 ## A
@@ -43,7 +54,7 @@ int main() {
 
 简单的贪心。
 
-首先判断是否有矛盾。如果有矛盾意味着不存在可行解。如果不存在矛盾，且 $\exist i,\ \mathrm{s.t.}\ b_i \neq -1$ ，则必然有唯一解，输出 $1$ 即可。否则，只需枚举可能的 $s$ 即可。容易证明，可能的 $s$ 的数量为 $k - \max{a_i} + \min{a_i} + 1$ 。因此输出即可。具体实现参考代码。
+首先判断是否有矛盾。如果有矛盾意味着不存在可行解。如果不存在矛盾，且 $\exists i,\ \mathrm{s.t.}\ b_i \neq -1$ ，则必然有唯一解，输出 $1$ 即可。否则，只需枚举可能的 $s$ 即可。容易证明，可能的 $s$ 的数量为 $k - \max{a_i} + \min{a_i} + 1$ 。因此输出即可。具体实现参考代码。
 
 ```cpp
 #include <bits/stdc++.h>

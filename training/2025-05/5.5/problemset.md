@@ -1,3 +1,14 @@
+---
+documentclass: ctexart
+pdfengine: xelatex
+geometry: 
+  - top=1.0in
+  - bottom=1.0in
+  - left=0.8in
+  - right=0.8in
+  - heightrounded
+---
+
 # 5.5 模拟赛
 
 ## A 失忆的诸国
