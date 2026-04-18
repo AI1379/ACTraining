@@ -1,0 +1,57 @@
+{
+	"LeetCode Snippet": {
+		"scope": "cpp",
+		"prefix": "leetcode",
+		"body": [
+			"#include <bits/stdc++.h>",
+			"using namespace std;",
+			"",
+			"#ifdef DEBUG",
+			"#define DOUT cerr",
+			"#else",
+			"#define DOUT if constexpr (false) cerr",
+			"#endif",
+			"",
+			"#define ll long long",
+			"",
+			"${1}",
+			"",
+			"int main() {",
+			"\t${2}",
+			"\treturn 0;",
+			"}"
+		],
+		"description": "LeetCode code template"
+	},
+	"CodeForces Snippet": {
+		"scope": "cpp",
+		"prefix": "codeforces",
+		"body": [
+			"#include <bits/stdc++.h>",
+			"using namespace std;",
+			"",
+			"#ifdef DEBUG",
+			"#define DOUT cerr",
+			"#else",
+			"#define DOUT if constexpr (false) cerr",
+			"#endif",
+			"",
+			"#define ll long long",
+			"",
+			"void solve() {",
+			"\t${1}",
+			"}",
+			"",
+			"int main() {",
+			"\tios::sync_with_stdio(false);",
+			"\tcin.tie(nullptr);",
+			"\tint t; cin >> t;",
+			"\twhile (t--) {",
+			"\t\tsolve();",
+			"\t}",
+			"\treturn 0;",
+			"}"
+		],
+		"description": "Codeforces code template"
+	}
+}

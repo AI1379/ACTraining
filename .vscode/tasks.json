@@ -21,7 +21,7 @@
     {
       "type": "shell",
       "label": "msysbuild",
-      "command": "gcc.exe",
+      "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe",
       "args": [
         "-g",
         "${file}",
@@ -37,7 +37,7 @@
       "options": {
         "cwd": "${fileDirname}",
         "env": {
-          "PATH": "${env:PATH};C:\\Users\\liste\\scoop\\apps\\msys2\\current\\usr\\bin",
+          "PATH": "${env:PATH};C:\\msys64\\ucrt64\\bin",
         }
       }
     }
