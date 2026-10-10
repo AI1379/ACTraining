@@ -1,0 +1,3 @@
+[submodule "ads-projects/proj1"]
+	path = ads-projects/proj1
+	url = git@github.com:Quinn-DJ/ads-proj1.git
