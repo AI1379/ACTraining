@@ -3,3 +3,5 @@ build/
 **/*.ilk
 **/*.pdb
 **/*.o
+# local scratch dir (slides / preview images)
+.ads-tmp/
