@@ -139,4 +139,6 @@
     "editor.tabSize": 2,
     "C_Cpp.clang_format_fallbackStyle": "LLVM",
     "C_Cpp.intelliSenseEngine": "disabled",
+    "cmake.sourceDirectory": "D:/Projects/ACTraining/ads-projects/proj1",
+    "cmake.buildDirectory": "${sourceDirectory}/build",
 }
