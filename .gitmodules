@@ -1,3 +1,7 @@
 [submodule "ads-projects/proj1"]
 	path = ads-projects/proj1
 	url = git@github.com:Quinn-DJ/ads-proj1.git
+[submodule "ads-projects/proj2"]
+	path = ads-projects/proj2
+	url = git@github.com:AI1379/pbds_benchmark.git
+	branch = ads-proj2
