@@ -139,6 +139,15 @@
     "editor.tabSize": 2,
     "C_Cpp.clang_format_fallbackStyle": "LLVM",
     "C_Cpp.intelliSenseEngine": "disabled",
-    "cmake.sourceDirectory": "D:/Projects/ACTraining/ads-projects/proj1",
+    // 构建入口是仓库根的 CMakeLists.txt（聚合 proj1/proj2，见该文件头注释）
     "cmake.buildDirectory": "${sourceDirectory}/build",
+    // gtest_discover_tests 注册的用例名是 "Suite.Case"；delimiter 按正则解释，
+    // 所以 "." 要转义成 "\\."，CMake Tools 会拆成 suite → case 两层显示
+    "cmake.ctest.testSuiteDelimiter": "\\.",
+    // gtest 的 death test 需要往 TEMP/TMP 写临时文件；这台机器上沙箱会拒绝
+    // 构建产物写 %TEMP%（GetTempFileNameA error 5），所以测试进程改用 build/。
+    "cmake.testEnvironment": {
+        "TEMP": "${workspaceFolder}/build",
+        "TMP": "${workspaceFolder}/build"
+    },
 }
